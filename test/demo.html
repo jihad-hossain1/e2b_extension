@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickTranslate (EN → BN) Demo & Test Suite</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d2e;
+      --card-border: #23314d;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-gradient: linear-gradient(135deg, #2563eb, #7c3aed);
+      --highlight: #fef08a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Bengali", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 32px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Hero Banner */
+    .hero {
+      text-align: center;
+      padding: 36px 20px;
+      background: radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.25), transparent 70%);
+      border-radius: 16px;
+      margin-bottom: 28px;
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff, #93c5fd, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Environment Status Pill */
+    .env-pill {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-weight: 500;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Main Layout: 2 Columns on desktop */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Guide Box */
+    .guide-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-left: 4px solid #3b82f6;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .guide-box h2 {
+      font-size: 15px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guide-steps {
+      margin-left: 20px;
+      color: var(--text-muted);
+      font-size: 13.5px;
+    }
+
+    .guide-steps li {
+      margin-bottom: 5px;
+    }
+
+    .guide-steps code {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #93c5fd;
+      font-size: 12.5px;
+    }
+
+    /* Test Cards */
+    .test-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .test-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .test-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .test-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .reading-content {
+      font-size: 15.5px;
+      line-height: 1.8;
+      background: rgba(11, 15, 25, 0.7);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .target-word {
+      background: rgba(59, 130, 246, 0.25);
+      color: #bfdbfe;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 1.5px dashed #3b82f6;
+      transition: background 0.15s;
+    }
+    .target-word:hover {
+      background: rgba(59, 130, 246, 0.4);
+    }
+
+    .target-phrase {
+      background: rgba(168, 85, 247, 0.25);
+      color: #e9d5ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 1.5px dashed #a855f7;
+      transition: background 0.15s;
+    }
+    .target-phrase:hover {
+      background: rgba(168, 85, 247, 0.4);
+    }
+
+    /* Form Inputs */
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-field, .textarea-field {
+      width: 100%;
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .input-field:focus, .textarea-field:focus {
+      border-color: #3b82f6;
+    }
+
+    .contenteditable-box {
+      min-height: 60px;
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px dashed var(--card-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .contenteditable-box:focus {
+      border-color: #a855f7;
+    }
+
+    .boundary-test-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    /* Right Column: Live Popup Frame Preview */
+    .popup-preview-column {
+      position: sticky;
+      top: 24px;
+    }
+
+    .popup-device-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .preview-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-badge {
+      font-size: 11px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .popup-iframe-wrapper {
+      width: 100%;
+      height: 520px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: #0f172a;
+    }
+
+    .popup-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Hero Banner -->
+    <header class="hero">
+      <div class="hero-badge">🚀 Test & Verification Suite</div>
+      <h1>QuickTranslate (EN &rarr; BN)</h1>
+      <p>Interactive testing playground for in-page translation, audio pronunciation, and extension popup modal.</p>
+      <div class="env-pill">
+        <span class="dot"></span>
+        <span id="envStatusText">QuickTranslate active (Instant Double-Click & Drag Enabled)</span>
+      </div>
+    </header>
+
+    <div class="layout-grid">
+      <!-- Left Column: In-Page Tooltip Scenarios -->
+      <main class="test-stack">
+        <!-- Quick Installation Guide -->
+        <section class="guide-box">
+          <h2>📦 How to Load in Google Chrome</h2>
+          <ol class="guide-steps">
+            <li>Open Chrome and navigate to <code>chrome://extensions</code></li>
+            <li>Enable <strong>Developer mode</strong> using the top-right toggle switch.</li>
+            <li>Click <strong>Load unpacked</strong> and select <code>/home/jihad/projects/others/e2b</code>.</li>
+            <li>Click the extension icon in your browser toolbar to open the popup anytime!</li>
+          </ol>
+        </section>
+
+        <!-- Test 1: Single Word Double-Click -->
+        <article class="test-card">
+          <h3>1. Single Word Double-Click (Offline & Hybrid)</h3>
+          <p class="test-desc"><strong>Action:</strong> Double-click any of the highlighted words below. The rich Bangla translation card will appear instantly with audio pronunciation and part of speech.</p>
+          <div class="reading-content">
+            A software <span class="target-word">developer</span> discovered that reading technical documentation can lead to unexpected <span class="target-word">serendipity</span>. With a high-speed <span class="target-word">computer</span> and deep <span class="target-word">knowledge</span>, creating <span class="target-word">beautiful</span> web applications becomes an <span class="target-word">extraordinary</span> journey for every <span class="target-word">student</span>.
+          </div>
+        </article>
+
+        <!-- Test 2: Multi-Word Drag Selection -->
+        <article class="test-card">
+          <h3>2. Multi-Word Selection (Action Badge)</h3>
+          <p class="test-desc"><strong>Action:</strong> Highlight (drag-select) 2 to 4 words from the passage below. A floating <span style="color: #93c5fd; font-weight: 600;">বাং Translate</span> badge appears near the selection. Clicking it reveals the full card.</p>
+          <div class="reading-content">
+            Modern engineering relies heavily on <span class="target-phrase">artificial intelligence</span> and <span class="target-phrase">machine learning</span> to create intelligent systems. Many learners enjoy <span class="target-phrase">reading a book</span> to cultivate <span class="target-phrase">peace of mind</span> while expanding their horizons.
+          </div>
+        </article>
+
+        <!-- Test 3: Editable Field Suppression -->
+        <article class="test-card">
+          <h3>3. Editable Field Suppression (Form Safety)</h3>
+          <p class="test-desc"><strong>Verification:</strong> Selecting or double-clicking text inside form inputs, textareas, or contenteditable boxes will <em>NOT</em> trigger tooltips, preserving undisturbed typing.</p>
+          <div class="form-row">
+            <div>
+              <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Input field:</label>
+              <input type="text" class="input-field" value="Double-clicking this English text inside an input should not trigger tooltips.">
+            </div>
+            <div>
+              <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Textarea:</label>
+              <textarea class="textarea-field" rows="2">Highlighting text inside this textarea must remain unhindered for normal editing.</textarea>
+            </div>
+            <div>
+              <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">ContentEditable Box:</label>
+              <div class="contenteditable-box" contenteditable="true">
+                Try selecting words like <strong>freedom</strong> or <strong>education</strong> inside this contenteditable container.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Test 4: Viewport Edge Collision -->
+        <article class="test-card">
+          <h3>4. Viewport Boundary Collision Detection</h3>
+          <p class="test-desc"><strong>Verification:</strong> Double-click words positioned at the left and right corners. The card gracefully clamps within the viewport without horizontal overflow.</p>
+          <div class="boundary-test-container">
+            <span class="target-word">phenomenon</span>
+            <span class="target-word">magnificent</span>
+          </div>
+        </article>
+      </main>
+
+      <!-- Right Column: Live Popup Preview Frame -->
+      <aside class="popup-preview-column">
+        <div class="popup-device-card">
+          <div class="preview-header">
+            <div class="preview-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              <span>Live Popup Toolbar Modal</span>
+            </div>
+            <span class="preview-badge">Interactive</span>
+          </div>
+          <div class="popup-iframe-wrapper">
+            <iframe src="../popup.html" class="popup-iframe" title="QuickTranslate Toolbar Popup"></iframe>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Standalone test harness for browser preview -->
+  <script>
+    let demoDict = null;
+    window.__quickTranslateCssUrl = '../content.css';
+
+    window.__quickTranslateMockTranslate = async function(text) {
+      const q = text.trim().toLowerCase();
+      if (!demoDict) {
+        try {
+          const res = await fetch('../data/dictionary.json');
+          demoDict = await res.json();
+        } catch {
+          demoDict = {};
+        }
+      }
+      if (demoDict && demoDict[q]) {
+        return {
+          success: true,
+          word: text,
+          meaning: demoDict[q].bn,
+          pos: demoDict[q].pos || '',
+          pron: demoDict[q].pron || '',
+          source: 'offline'
+        };
+      }
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=bn&dt=t&dt=bd&dt=rm&q=${encodeURIComponent(text)}`;
+        const r = await fetch(url);
+        const d = await r.json();
+        const meaning = (d[0] || []).filter(p => p && p[0]).map(p => p[0]).join('').trim();
+        let pron = '';
+        if (d[0] && d[0].length > 1 && d[0][d[0].length - 1][3]) {
+          pron = d[0][d[0].length - 1][3];
+        }
+        let pos = '';
+        if (d[1] && d[1][0] && d[1][0][0]) pos = d[1][0][0];
+        return {
+          success: true,
+          word: text,
+          meaning: meaning || text,
+          pos,
+          pron,
+          source: 'online'
+        };
+      } catch (e) {
+        return { success: false, error: 'Network / Translation error' };
+      }
+    };
+  </script>
+  <script src="../content.js"></script>
+</body>
+</html>

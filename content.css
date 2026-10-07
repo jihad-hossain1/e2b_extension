@@ -1,0 +1,504 @@
+/**
+ * QuickTranslate: English to Bangla
+ * Shadow DOM Scoped Stylesheet (content.css)
+ * Encapsulated within Shadow Root to prevent host page style contamination.
+ */
+
+:host {
+  all: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 2147483647;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Bengali", "Kalpurush", Helvetica, Arial, sans-serif;
+  color-scheme: light dark;
+}
+
+/* Base resets inside Shadow DOM */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container wrapper */
+.qt-wrapper {
+  position: fixed;
+  pointer-events: auto;
+  user-select: none;
+  z-index: 2147483647;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* -------------------------------------------------------------
+   1. Floating Trigger Badge (For multi-word selection)
+------------------------------------------------------------- */
+.qt-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35), 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  transform-origin: center;
+  animation: qt-pop-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.qt-badge:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+}
+
+.qt-badge:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.qt-badge-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qt-badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* -------------------------------------------------------------
+   2. Main Translation Card
+------------------------------------------------------------- */
+.qt-card {
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  overflow: hidden;
+  animation: qt-card-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(16px);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .qt-card {
+    background: #1e293b;
+    color: #f8fafc;
+    border-color: rgba(51, 65, 85, 0.9);
+    box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 0 6px 12px -4px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Explicit theme classes */
+.qt-theme-dark .qt-card {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: rgba(51, 65, 85, 0.9);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.5);
+}
+
+.qt-theme-light .qt-card {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(226, 232, 240, 0.9);
+}
+
+/* Header */
+.qt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(248, 250, 252, 0.85);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-header {
+    background: rgba(15, 23, 42, 0.6);
+    border-bottom-color: rgba(51, 65, 85, 0.8);
+  }
+}
+.qt-theme-dark .qt-header {
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom-color: rgba(51, 65, 85, 0.8);
+}
+.qt-theme-light .qt-header {
+  background: rgba(248, 250, 252, 0.85);
+  border-bottom-color: rgba(226, 232, 240, 0.8);
+}
+
+.qt-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  max-width: 80%;
+}
+
+.qt-word-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-word-title {
+    color: #f1f5f9;
+  }
+}
+.qt-theme-dark .qt-word-title {
+  color: #f1f5f9;
+}
+.qt-theme-light .qt-word-title {
+  color: #1e293b;
+}
+
+.qt-pos-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #e0e7ff;
+  color: #4338ca;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-pos-badge {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+  }
+}
+.qt-theme-dark .qt-pos-badge {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+}
+.qt-theme-light .qt-pos-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.qt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qt-btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.qt-btn-icon:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-btn-icon {
+    color: #94a3b8;
+  }
+  .qt-btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+  }
+}
+.qt-theme-dark .qt-btn-icon {
+  color: #94a3b8;
+}
+.qt-theme-dark .qt-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+.qt-theme-light .qt-btn-icon {
+  color: #64748b;
+}
+.qt-theme-light .qt-btn-icon:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+
+/* Pronunciation Bar */
+.qt-pron-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: rgba(241, 245, 249, 0.5);
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+  font-family: Georgia, Cambria, serif;
+  border-bottom: 1px dashed rgba(226, 232, 240, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-pron-bar {
+    background: rgba(30, 41, 59, 0.4);
+    color: #94a3b8;
+    border-bottom-color: rgba(51, 65, 85, 0.6);
+  }
+}
+.qt-theme-dark .qt-pron-bar {
+  background: rgba(30, 41, 59, 0.4);
+  color: #94a3b8;
+  border-bottom-color: rgba(51, 65, 85, 0.6);
+}
+.qt-theme-light .qt-pron-bar {
+  background: rgba(241, 245, 249, 0.5);
+  color: #64748b;
+  border-bottom-color: rgba(226, 232, 240, 0.6);
+}
+
+/* Body / Translation Meaning */
+.qt-body {
+  padding: 14px;
+}
+
+.qt-meaning {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #1e1b4b;
+  font-family: "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
+  letter-spacing: 0.1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-meaning {
+    color: #f1f5f9;
+  }
+}
+.qt-theme-dark .qt-meaning {
+  color: #f1f5f9;
+}
+.qt-theme-light .qt-meaning {
+  color: #1e1b4b;
+}
+
+/* Synonyms or Extra meanings */
+.qt-synonyms {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.qt-syn-tag {
+  font-size: 11px;
+  padding: 2px 7px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-syn-tag {
+    background: rgba(51, 65, 85, 0.5);
+    color: #cbd5e1;
+  }
+}
+.qt-theme-dark .qt-syn-tag {
+  background: rgba(51, 65, 85, 0.5);
+  color: #cbd5e1;
+}
+.qt-theme-light .qt-syn-tag {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Loading state */
+.qt-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.qt-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: qt-spin 0.6s linear infinite;
+}
+
+/* Footer */
+.qt-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(248, 250, 252, 0.6);
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-footer {
+    background: rgba(15, 23, 42, 0.4);
+    border-top-color: rgba(51, 65, 85, 0.6);
+  }
+}
+.qt-theme-dark .qt-footer {
+  background: rgba(15, 23, 42, 0.4);
+  border-top-color: rgba(51, 65, 85, 0.6);
+}
+.qt-theme-light .qt-footer {
+  background: rgba(248, 250, 252, 0.6);
+  border-top-color: rgba(226, 232, 240, 0.6);
+}
+
+.qt-source-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.qt-source-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.qt-source-offline .qt-source-dot {
+  background: #10b981;
+}
+.qt-source-offline {
+  color: #059669;
+}
+
+.qt-source-online .qt-source-dot {
+  background: #3b82f6;
+}
+.qt-source-online {
+  color: #2563eb;
+}
+
+.qt-source-cache .qt-source-dot {
+  background: #8b5cf6;
+}
+.qt-source-cache {
+  color: #7c3aed;
+}
+
+.qt-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid rgba(203, 213, 225, 0.6);
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qt-copy-btn:hover {
+  background: #ffffff;
+  color: #1e293b;
+  border-color: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qt-copy-btn {
+    border-color: rgba(71, 85, 105, 0.6);
+    color: #94a3b8;
+  }
+  .qt-copy-btn:hover {
+    background: #334155;
+    color: #f1f5f9;
+  }
+}
+.qt-theme-dark .qt-copy-btn {
+  border-color: rgba(71, 85, 105, 0.6);
+  color: #94a3b8;
+}
+.qt-theme-dark .qt-copy-btn:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+.qt-theme-light .qt-copy-btn {
+  border-color: rgba(203, 213, 225, 0.6);
+  color: #475569;
+}
+.qt-theme-light .qt-copy-btn:hover {
+  background: #ffffff;
+  color: #1e293b;
+}
+
+.qt-copy-btn.qt-copied {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #6ee7b7;
+}
+
+/* Animations */
+@keyframes qt-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes qt-card-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes qt-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

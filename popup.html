@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickTranslate (EN → BN)</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="theme-system">
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <img src="assets/icon48.png" alt="Logo" class="brand-logo">
+        <div class="brand-text">
+          <h1 class="brand-title">QuickTranslate</h1>
+          <span class="brand-sub">English &rarr; বাংলা</span>
+        </div>
+      </div>
+      <div id="siteStatusBadge" class="site-status-badge" title="Status on current tab">
+        <span class="status-dot"></span>
+        <span class="status-text">Active</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="search" role="tab" aria-selected="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Search</span>
+      </button>
+
+      <button class="nav-tab" data-tab="history" role="tab" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>History</span>
+        <span id="historyBadge" class="badge-counter" style="display: none;">0</span>
+      </button>
+
+      <button class="nav-tab" data-tab="settings" role="tab" aria-selected="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <!-- Tab Panels Container -->
+    <main class="panels-container">
+      <!-- 1. Search Panel -->
+      <section id="panelSearch" class="panel active">
+        <form id="searchForm" class="search-box">
+          <div class="input-wrapper">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Type an English word or phrase..." autocomplete="off" autofocus>
+            <button type="button" id="clearSearchBtn" class="clear-btn" style="display: none;" title="Clear">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <button type="submit" class="search-submit-btn" title="Search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </form>
+
+        <!-- Result Container -->
+        <div id="searchResultArea" class="result-area">
+          <!-- Populated dynamically via popup.js -->
+        </div>
+
+        <!-- Suggestions / Empty state -->
+        <div id="quickSuggestions" class="quick-suggestions">
+          <p class="suggestions-label">Explore common words:</p>
+          <div class="chips-container">
+            <button class="chip" data-word="serendipity">serendipity</button>
+            <button class="chip" data-word="computer">computer</button>
+            <button class="chip" data-word="knowledge">knowledge</button>
+            <button class="chip" data-word="resilient">resilient</button>
+            <button class="chip" data-word="developer">developer</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. History Panel -->
+      <section id="panelHistory" class="panel">
+        <div class="history-header">
+          <div class="history-title-area">
+            <h2 class="section-title">Looked-up Words</h2>
+            <span id="historyCountText" class="section-subtitle">0 words saved</span>
+          </div>
+          <button type="button" id="clearAllHistoryBtn" class="action-btn text-danger" title="Clear all history">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Clear All</span>
+          </button>
+        </div>
+
+        <div id="historyList" class="history-list">
+          <!-- Populated dynamically via popup.js -->
+        </div>
+
+        <!-- History Empty State -->
+        <div id="historyEmptyState" class="empty-state" style="display: none;">
+          <div class="empty-icon">📖</div>
+          <h3>No vocabulary history yet</h3>
+          <p>Words you double-click or search will appear here for easy revision.</p>
+        </div>
+      </section>
+
+      <!-- 3. Settings Panel -->
+      <section id="panelSettings" class="panel">
+        <h2 class="section-title" style="margin-bottom: 12px;">Extension Preferences</h2>
+
+        <!-- Current Website Toggle Card -->
+        <div class="settings-card current-site-card">
+          <div class="site-card-header">
+            <div class="site-icon-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <div class="site-info">
+              <span class="site-label">Current Website</span>
+              <strong id="currentDomainText" class="site-domain">loading...</strong>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <span id="siteToggleLabel">Enable translation on this site</span>
+            <label class="switch">
+              <input type="checkbox" id="siteToggleCheckbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Global Settings Options -->
+        <div class="settings-group">
+          <!-- Enable In-Page Tooltip -->
+          <div class="setting-item">
+            <div class="setting-text">
+              <label for="settingEnabled" class="setting-title">In-Page Floating Tooltip</label>
+              <p class="setting-desc">Show Bangla translation on double-click or selection</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingEnabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Require Alt/Option Key -->
+          <div class="setting-item">
+            <div class="setting-text">
+              <label for="settingAltKey" class="setting-title">Require Alt / Option Key</label>
+              <p class="setting-desc">Only trigger tooltip when holding the Alt key</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingAltKey">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Auto Speak -->
+          <div class="setting-item">
+            <div class="setting-text">
+              <label for="settingAutoSpeak" class="setting-title">Pronounce Automatically</label>
+              <p class="setting-desc">Read English audio aloud when translation appears</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingAutoSpeak">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Theme Selection -->
+          <div class="setting-item">
+            <div class="setting-text">
+              <span class="setting-title">Theme</span>
+              <p class="setting-desc">Choose appearance for popup and tooltip</p>
+            </div>
+            <div class="segmented-control" id="themeSegmented">
+              <button type="button" class="seg-btn active" data-theme="system">Auto</button>
+              <button type="button" class="seg-btn" data-theme="light">Light</button>
+              <button type="button" class="seg-btn" data-theme="dark">Dark</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostics Footer -->
+        <div class="system-stats">
+          <div class="stat-badge">
+            <span class="stat-dot green"></span>
+            <span id="dictStatsText">9,500 Offline Words</span>
+          </div>
+          <span class="version-label">v1.0.0 (Manifest V3)</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
